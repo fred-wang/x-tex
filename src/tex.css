@@ -1,0 +1,6 @@
+x-tex {
+  display: inline; 
+}
+x-tex[display="block"] {
+  display: block;
+}

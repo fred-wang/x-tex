@@ -1,24 +1,32 @@
 # About
 
-This repo is an X-Tag custom web-component stub that can be used as a starting point when building new elements.  It provides that basic tools and grunt tasks to get started.
+x-tex is a simple container for (La)TeX expressions that automatically converts them into MathML.
 
-# Dev Setup
-
-```
-Fork this repo, rename it, then clone it.
-
-$ npm install	// install bower tasks
-$ bower install	// install components
-$ grunt build   // build the dependencies
+# Usage
 
 ```
+        <x-tex>\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1</x-tex>
+        <x-tex display="block">\Gamma(t) = \lim_{n \to \infty} \frac{n! \; n^t}{t \; (t+1)\cdots(t+n)}= \frac{1}{t} \prod_{n=1}^\infty \frac{\left(1+\frac{1}{n}\right)^t}{1+\frac{t}{n}} = \frac{e^{-\gamma t}}{t} \prod_{n=1}^\infty \left(1 + \frac{t}{n}\right)^{-1} e^{\frac{t}{n}}</x-tex>
+        <x-tex dir="rtl">س = \frac{-ب\pm\sqrt{ب^٢-٤اج}}{٢ا}</x-tex>
+```
 
-# Links
+# Install
 
-[X-Tags Docs](http://x-tags.org/docs)
+*Requirements*
 
-[Guide for creating X-Tag Components](https://github.com/x-tag/core/wiki/Creating-X-Tag-Components)
+Node / NPM
 
-[Using X-Tag components in your applications](https://github.com/x-tag/core/wiki/Using-our-Web-Components-in-Your-Application)
+Bower (Package Manager)
+
+	$ npm install bower -g
+
+For development
+	
+	$ bower install
+
+Inside your project run:
+
+	$ bower install x-tag-tex
 
 
+This downloads the component and dependencies to ./components
