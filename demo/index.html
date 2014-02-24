@@ -80,33 +80,51 @@
     </div>
 
     <script type="text/javascript">
-      function updateEquation()
-      {
+      function updateDisplay() {
         var tex = document.getElementById("tex");
         if (document.getElementById("mode").value === "display") {
           tex.setAttribute("display", "block")
         } else {
           tex.removeAttribute("display")
         }
+      }
+
+      function updateDir() {
+        var tex = document.getElementById("tex");
         if (document.getElementById("dir").value === "RTL") {
           tex.setAttribute("dir", "rtl")
         } else {
           tex.removeAttribute("dir")
         }
       }
+
+      function updateSource() {
+        var tex = document.getElementById("tex");
+        tex.source = document.getElementById("source").value;
+      }
     </script>
 
     <p>Finally, the &lt;x-tex&gt; tag will react to dynamic changes, as shown
-      in the following example.
-      <select id="mode" onchange="updateEquation()">
+      in the following example where we use Javascript to modify the
+      <code>display</code> and
+      <code>dir</code> attributes of the <code>&lt;x-tex&gt;</code> tag or
+      to set its <code>source</code> property.
+      <select id="mode" onchange="updateDisplay()">
         <option value="inline">Inline Mode</option>
         <option value="display">Display Mode</option>
       </select> ;
-      <select id="dir" onchange="updateEquation()">
+      <select id="dir" onchange="updateDir()">
         <option value="LTR">LTR</option>
         <option value="RTL">RTL</option>
       </select> ;
-      <x-tex id="tex">\left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} \right) {| \varphi(x+ i y)|}^2 = 0</x-tex>
+      <select id="source" onchange="updateSource()">
+        <option value="\sqrt 2">Equation 1</option>
+        <option value="\left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} \right) {| \varphi(x+ i y)|}^2 = 0">Equation 2</option>
+        <option value="f(x) = \begin{cases} 1/3 &amp; \text{if} \quad 0 \leq x \leq 1; \\ 2/3 &amp; \text{if} \quad 3 \leq x \leq 4; \\ 0 &amp; \text{elsewhere}. \end{cases}">Equation 3</option>
+        <option value="1 +  \frac{q^2}{(1-q)}+\frac{q^6}{(1-q)(1-q^2)}+\cdots =
+\prod_{j=0}^{\infty}\frac{1}{(1-q^{5j+2})(1-q^{5j+3})}, \quad\quad \text{for} \quad |q| < 1.">Equation 4</option>
+      </select>
+      <x-tex id="tex">\sqrt 2</x-tex>
     </p>
 
     <h2>Sample Document using &lt;x-tex&gt;</h2>

@@ -5355,53 +5355,50 @@ function Parser () {
 Parser.prototype = parser;parser.Parser = Parser;
 return new Parser;
 })();
+
+  var updateMathAttributes = function(aElement)
+  {
+    var display = aElement.getAttribute("display"),
+      dir = aElement.getAttribute("dir");
+    var math = aElement.firstElementChild;
+    if (display === null) {
+      math.removeAttribute("display");
+    } else {
+      math.setAttribute("display", display);
+    }
+    if (dir === null) {
+      math.removeAttribute("dir");
+    } else {
+      math.setAttribute("dir", dir);
+    }
+  }
+
+  var updateMathMLOutput = function(aElement)
+  {
+    var tex = aElement.textContent,
+      display = aElement.getAttribute("display"),
+      dir = aElement.getAttribute("dir");
+    try {
+      // Parse the TeX input and replace it with the MathML output.
+      aElement.innerHTML =
+        TeXZilla.toMathMLString(tex, display === "block", dir === "rtl", true);
+    } catch(e) {
+      // Parsing failed: use an <merror> with the original TeX input.
+      aElement.innerHTML = "<math><merror>" + tex + "</merror></math>";
+    }
+    updateMathAttributes(aElement);
+  }
   
   xtag.register('x-tex', {
     // FIXME: Does x-tag allow to track changes of the <x-tex> content?
     lifecycle: {
       created: function() {
-        var tex = this.textContent;
-        try {
-          // Parse the TeX input and replace it with the MathML output.
-          this.innerHTML =
-            TeXZilla.toMathMLString(tex,
-                                    this.getAttribute("display") == "block",
-                                    this.getAttribute("dir") == "rtl",
-                                    true);
-        } catch(e) {
-          // Parsing failed: use an <merror> with the original TeX input.
-          while (this.firstChild) {
-            this.removeChild(this.firstChild);
-          }
-          this.innerHTML = "<math><merror>" + tex + "</merror></math>";
-        }
-        var math = this.firstElementChild;
-        var display = this.getAttribute("display");
-        var dir = this.getAttribute("dir");
-        if (display !== null) {
-          math.setAttribute("display", display);
-        }
-        if (dir !== null) {
-          math.setAttribute("dir", dir);
-        }
+        updateMathMLOutput(this);
       },
       inserted: function() {},
       removed: function() { },
       attributeChanged: function() {
-        // Copy the dir/display attributes onto the <math> element.
-        var math = this.firstElementChild;
-        var display = this.getAttribute("display");
-        var dir = this.getAttribute("dir");
-        if (display !== null) {
-          math.setAttribute("display", display);
-        } else {
-          math.removeAttribute("display");
-        }
-        if (dir !== null) {
-          math.setAttribute("dir", dir);
-        } else {
-          math.removeAttribute("dir");
-        }
+        updateMathAttributes(this);
       }
     }, 
     events: { 
@@ -5411,6 +5408,11 @@ return new Parser;
         get: function() {
           // Retrieve the TeX source saved in the semantics <annotation>.
           return TeXZilla.getTeXSource(this.firstElementChild);
+        },
+        set: function(aTeX) {
+          // Set the TeX source and regenerate the MathML.
+          this.textContent = aTeX;
+          updateMathMLOutput(this);
         }
       }
     }, 
