@@ -1047,7 +1047,7 @@ parser.toMathMLString = function(aTeX, aDisplay, aRTL, aThrowExceptionOnError)
     if (aThrowExceptionOnError) {
        throw e;
     }
-    output = "<merror>" + escapeText(e.message) + "</merror>";
+    output = "<merror><mtext>" + escapeText(e.message) + "</mtext></merror>";
   }
 
   /* Add the <math> root and attach the TeX annotation. */
@@ -5375,7 +5375,7 @@ return new Parser;
 
   var updateMathMLOutput = function(aElement)
   {
-    var tex = aElement.textContent,
+    var tex = aElement.mSource,
       display = aElement.getAttribute("display"),
       dir = aElement.getAttribute("dir");
     try {
@@ -5384,21 +5384,32 @@ return new Parser;
         TeXZilla.toMathMLString(tex, display === "block", dir === "rtl", true);
     } catch(e) {
       // Parsing failed: use an <merror> with the original TeX input.
-      aElement.innerHTML = "<math><merror>" + tex + "</merror></math>";
+      aElement.innerHTML = "<math><merror><mtext>" + tex + "</mtext></merror></math>";
     }
     updateMathAttributes(aElement);
+    if (window.MathJax) {
+      // Ask MathJax to typeset the element again.
+      window.MathJax.Hub.Typeset(aElement);
+    }
   }
   
   xtag.register('x-tex', {
     // FIXME: Does x-tag allow to track changes of the <x-tex> content?
     lifecycle: {
       created: function() {
+        this.mSource = this.textContent;
         updateMathMLOutput(this);
       },
       inserted: function() {},
       removed: function() { },
       attributeChanged: function() {
-        updateMathAttributes(this);
+        if (window.MathJax) {
+          // For MathJax, we need to regenerate everything.
+          this.textContent = this.mSource;
+          updateMathMLOutput(this);
+        } else {
+          updateMathAttributes(this);
+        }
       }
     }, 
     events: { 
@@ -5406,12 +5417,12 @@ return new Parser;
     accessors: {
       source: {
         get: function() {
-          // Retrieve the TeX source saved in the semantics <annotation>.
-          return TeXZilla.getTeXSource(this.firstElementChild);
+          // Retrieve the TeX source.
+          return this.mSource;
         },
         set: function(aTeX) {
           // Set the TeX source and regenerate the MathML.
-          this.textContent = aTeX;
+          this.mSource = aTeX;
           updateMathMLOutput(this);
         }
       }
@@ -5431,7 +5442,26 @@ return new Parser;
                      ua.indexOf("Chrome") === -1;
       if (!(isGecko || isWebKit)) {
         var s = document.createElement("script");
-        s.src = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML";
+        MathJax = {
+          // Try to make MathJax behave as much as possible as native MathML.
+          jax: ["input/MathML", "output/HTML-CSS"],
+          extensions: ["mml2jax.js"],
+          showProcessingMessages: false,
+          messageStyle: "none",
+          showMathMenu: false,
+          showMathMenuMSIE: false,
+          menuSettings: {
+            context: "Browser"
+          },
+          MathML: {
+            useMathMLspacing: true
+          },
+          "HTML-CSS": {
+            mtextFontInherit: true,
+            matchFontHeight: false
+          }
+        };
+        s.src = "http://cdn.mathjax.org/mathjax/latest/MathJax.js";
         document.querySelector('head').appendChild(s);
       }
     }
