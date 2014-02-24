@@ -5418,4 +5418,21 @@ return new Parser;
     }
   });
 
+  window.addEventListener("load",  function() {
+    if (!window.MathJax) {
+      // If the user agent is not Gecko/WebKit, we try to load MathJax to
+      // display the MathML code. This won't work well in general but will at
+      // render something on browsers without MathML support.
+      var ua = navigator.userAgent;
+      var isGecko = ua.indexOf("Gecko") > -1 && ua.indexOf("KHTML") === -1;
+      var isWebKit = ua.indexOf("AppleWebKit") > -1 &&
+                     ua.indexOf("Chrome") === -1;
+      if (!(isGecko || isWebKit)) {
+        var s = document.createElement("script");
+        s.src = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=MML_HTMLorMML";
+        document.querySelector('head').appendChild(s);
+      }
+    }
+  });
+
 })();

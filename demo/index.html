@@ -22,7 +22,13 @@
       using <a href="http://fred-wang.github.io/TeXZilla/">TeXZilla</a> and
       the mathematical formula is displayed by your rendering engine. In
       particular, you need a standard-compliant HTML5 rendering engine as
-      well as appropriate math fonts in order to get a good rendering.</p>
+      well as appropriate math fonts in order to get a good rendering.
+      Note that after
+      <a href="https://github.com/fred-wang/x-tex/issues/4">issue 4</a>, MathJax
+      is loaded at startup for browsers without MathML support. This should at
+      least allow to display something for these browsers but is not guaranteed
+      to work perfectly.
+    </p>
 
     <p>You can use the <code>&lt;x-tex&gt;</code> tag to write inline
       mathematical expressions such as
