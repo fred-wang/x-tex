@@ -1,6 +1,6 @@
 # About
 
-x-tex is a simple container for (La)TeX expressions that automatically converts them into MathML.
+x-tex is a simple container for (La)TeX expressions that automatically converts them into MathML, which uses the [X-Tag Polylib](http://x-tags.org/). For a more native implementation with Web Components and Shadow DOM, see [this example from TeXZilla](http://fred-wang.github.io/TeXZilla/examples/customElement.html).
 
 # Usage
 
